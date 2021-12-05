@@ -21,6 +21,9 @@ class Exp(MyExp):
         self.mixup_prob = 1.0
         self.hsv_prob = 1.0
         self.flip_prob = 0.5
+        # ---------------- dataloader config ---------------- #
+        # set worker to 4 for shorter dataloader init time
+        self.data_num_workers = 2
 
         # --------------  training config --------------------- #
         self.print_interval = 1
