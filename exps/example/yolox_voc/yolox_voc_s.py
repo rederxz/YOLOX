@@ -11,7 +11,7 @@ from yolox.exp import Exp as MyExp
 class Exp(MyExp):
     def __init__(self):
         super(Exp, self).__init__()
-        self.num_classes = 20
+        self.num_classes = 4
         self.depth = 0.33
         self.width = 0.50
         self.warmup_epochs = 1
@@ -21,6 +21,10 @@ class Exp(MyExp):
         self.mixup_prob = 1.0
         self.hsv_prob = 1.0
         self.flip_prob = 0.5
+
+        # --------------  training config --------------------- #
+        self.print_interval = 1
+        self.eval_interval = 1
 
         self.exp_name = os.path.split(os.path.realpath(__file__))[1].split(".")[0]
 
@@ -43,10 +47,10 @@ class Exp(MyExp):
         with wait_for_the_master(local_rank):
             dataset = VOCDetection(
                 data_dir=os.path.join(get_yolox_datadir(), "VOCdevkit"),
-                image_sets=[('2007', 'trainval'), ('2012', 'trainval')],
+                image_sets=[('2007', 'train')],  # 我们将上级目录命名为"VOC2007"，并使用其中的"train"部分进行训练
                 img_size=self.input_size,
                 preproc=TrainTransform(
-                    max_labels=50,
+                    max_labels=5,
                     flip_prob=self.flip_prob,
                     hsv_prob=self.hsv_prob),
                 cache=cache_img,
@@ -101,7 +105,7 @@ class Exp(MyExp):
 
         valdataset = VOCDetection(
             data_dir=os.path.join(get_yolox_datadir(), "VOCdevkit"),
-            image_sets=[('2007', 'test')],
+            image_sets=[('2007', 'trainval')],
             img_size=self.test_size,
             preproc=ValTransform(legacy=legacy),
         )
